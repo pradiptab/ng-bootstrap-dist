@@ -8,4 +8,6 @@ export declare class NgbProgressbarConfig {
     animated: boolean;
     striped: boolean;
     type: string;
+    showValue: boolean;
+    height: string;
 }

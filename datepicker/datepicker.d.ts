@@ -1,11 +1,13 @@
-import { OnChanges, TemplateRef, OnInit, SimpleChanges, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef, OnChanges, TemplateRef, OnInit, SimpleChanges, EventEmitter, OnDestroy, ElementRef, NgZone } from '@angular/core';
 import { ControlValueAccessor } from '@angular/forms';
 import { NgbCalendar } from './ngb-calendar';
 import { NgbDate } from './ngb-date';
 import { NgbDatepickerService } from './datepicker-service';
-import { MonthViewModel, NavigationEvent } from './datepicker-view-model';
+import { NgbDatepickerKeyMapService } from './datepicker-keymap-service';
+import { DatepickerViewModel, NavigationEvent } from './datepicker-view-model';
 import { DayTemplateContext } from './datepicker-day-template-context';
 import { NgbDatepickerConfig } from './datepicker-config';
+import { NgbDateAdapter } from './adapters/ngb-date-adapter';
 import { NgbDateStruct } from './ngb-date-struct';
 import { NgbDatepickerI18n } from './datepicker-i18n';
 /**
@@ -30,19 +32,33 @@ export interface NgbDatepickerNavigateEvent {
 /**
  * A lightweight and highly configurable datepicker directive
  */
-export declare class NgbDatepicker implements OnChanges, OnInit, ControlValueAccessor {
-    private _service;
+export declare class NgbDatepicker implements OnDestroy, OnChanges, OnInit, ControlValueAccessor {
+    private _keyMapService;
+    _service: NgbDatepickerService;
     private _calendar;
     i18n: NgbDatepickerI18n;
-    _date: NgbDate;
-    _maxDate: NgbDate;
-    _minDate: NgbDate;
-    model: NgbDate;
-    months: MonthViewModel[];
+    private _cd;
+    private _elementRef;
+    private _ngbDateAdapter;
+    private _ngZone;
+    model: DatepickerViewModel;
+    private _controlValue;
+    private _subscription;
+    private _selectSubscription;
     /**
      * Reference for the custom template for the day display
      */
     dayTemplate: TemplateRef<DayTemplateContext>;
+    /**
+     * Callback to pass any arbitrary data to the custom day template context
+     * 'Current' contains the month that will be displayed in the view
+     *
+     * @since 3.3.0
+     */
+    dayTemplateData: (date: NgbDate, current: {
+        year: number;
+        month: number;
+    }) => any;
     /**
      * Number of months to display
      */
@@ -52,21 +68,27 @@ export declare class NgbDatepicker implements OnChanges, OnInit, ControlValueAcc
      */
     firstDayOfWeek: number;
     /**
+     * Reference for the custom template for the footer
+     *
+     * @since 3.3.0
+     */
+    footerTemplate: TemplateRef<any>;
+    /**
      * Callback to mark a given date as disabled.
      * 'Current' contains the month that will be displayed in the view
      */
-    markDisabled: (date: NgbDateStruct, current: {
+    markDisabled: (date: NgbDate, current: {
         year: number;
         month: number;
     }) => boolean;
     /**
-     * Min date for the navigation. If not provided will be 10 years before today or `startDate`
-     */
-    minDate: NgbDateStruct;
-    /**
-     * Max date for the navigation. If not provided will be 10 years from today or `startDate`
+     * Max date for the navigation. If not provided, 'year' select box will display 10 years after current month
      */
     maxDate: NgbDateStruct;
+    /**
+     * Min date for the navigation. If not provided, 'year' select box will display 10 years before current month
+     */
+    minDate: NgbDateStruct;
     /**
      * Navigation type: `select` (default with select boxes for month and year), `arrows`
      * (without select boxes, only navigation arrows) or `none` (no navigation at all)
@@ -94,16 +116,25 @@ export declare class NgbDatepicker implements OnChanges, OnInit, ControlValueAcc
     startDate: {
         year: number;
         month: number;
+        day?: number;
     };
     /**
      * An event fired when navigation happens and currently displayed month changes.
      * See NgbDatepickerNavigateEvent for the payload info.
      */
     navigate: EventEmitter<NgbDatepickerNavigateEvent>;
-    disabled: boolean;
+    /**
+     * An event fired when user selects a date using keyboard or mouse.
+     * The payload of the event is currently selected NgbDate.
+     */
+    select: EventEmitter<NgbDate>;
     onChange: (_: any) => void;
     onTouched: () => void;
-    constructor(_service: NgbDatepickerService, _calendar: NgbCalendar, i18n: NgbDatepickerI18n, config: NgbDatepickerConfig);
+    constructor(_keyMapService: NgbDatepickerKeyMapService, _service: NgbDatepickerService, _calendar: NgbCalendar, i18n: NgbDatepickerI18n, config: NgbDatepickerConfig, _cd: ChangeDetectorRef, _elementRef: ElementRef<HTMLElement>, _ngbDateAdapter: NgbDateAdapter<any>, _ngZone: NgZone);
+    /**
+     * Manually focus the focusable day in the datepicker
+     */
+    focus(): void;
     /**
      * Navigates current view to provided date.
      * With default calendar we use ISO 8601: 'month' is 1=Jan ... 12=Dec.
@@ -113,17 +144,18 @@ export declare class NgbDatepicker implements OnChanges, OnInit, ControlValueAcc
     navigateTo(date?: {
         year: number;
         month: number;
+        day?: number;
     }): void;
+    ngOnDestroy(): void;
     ngOnInit(): void;
     ngOnChanges(changes: SimpleChanges): void;
     onDateSelect(date: NgbDate): void;
+    onKeyDown(event: KeyboardEvent): void;
     onNavigateDateSelect(date: NgbDate): void;
     onNavigateEvent(event: NavigationEvent): void;
     registerOnChange(fn: (value: any) => any): void;
     registerOnTouched(fn: () => any): void;
-    writeValue(value: any): void;
     setDisabledState(isDisabled: boolean): void;
-    private _setDates();
-    private _setViewWithinLimits(date);
-    private _updateData(force?);
+    showFocus(focusVisible: boolean): void;
+    writeValue(value: any): void;
 }

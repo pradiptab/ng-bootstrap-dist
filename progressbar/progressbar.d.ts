@@ -17,6 +17,10 @@ export declare class NgbProgressbar {
      */
     striped: boolean;
     /**
+     * A flag indicating if the current percentage value should be shown.
+     */
+    showValue: boolean;
+    /**
      * Type of progress bar, can be one of "success", "info", "warning" or "danger".
      */
     type: string;
@@ -24,6 +28,10 @@ export declare class NgbProgressbar {
      * Current value to be displayed in the progressbar. Should be smaller or equal to "max" value.
      */
     value: number;
+    /**
+     * Height of the progress bar. Accepts any valid CSS height values, ex. '2rem'
+     */
+    height: string;
     constructor(config: NgbProgressbarConfig);
     getValue(): number;
     getPercentValue(): number;

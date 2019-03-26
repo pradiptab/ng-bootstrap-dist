@@ -4,5 +4,7 @@
  * order to provide default values for all the tabsets used in the application.
  */
 export declare class NgbTabsetConfig {
+    justify: 'start' | 'center' | 'end' | 'fill' | 'justified';
+    orientation: 'horizontal' | 'vertical';
     type: 'tabs' | 'pills';
 }

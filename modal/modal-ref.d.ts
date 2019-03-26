@@ -1,4 +1,4 @@
-import { ComponentRef, ViewContainerRef } from '@angular/core';
+import { ComponentRef } from '@angular/core';
 import { NgbModalBackdrop } from './modal-backdrop';
 import { NgbModalWindow } from './modal-window';
 import { ContentRef } from '../util/popup';
@@ -8,41 +8,46 @@ import { ContentRef } from '../util/popup';
  */
 export declare class NgbActiveModal {
     /**
-     * Can be used to close a modal, passing an optional result.
+     * Closes the modal with an optional 'result' value.
+     * The 'NgbMobalRef.result' promise will be resolved with provided value.
      */
     close(result?: any): void;
     /**
-     * Can be used to dismiss a modal, passing an optional reason.
+     * Dismisses the modal with an optional 'reason' value.
+     * The 'NgbModalRef.result' promise will be rejected with provided value.
      */
     dismiss(reason?: any): void;
 }
 /**
- * A reference to a newly opened modal.
+ * A reference to a newly opened modal returned by the 'NgbModal.open()' method.
  */
 export declare class NgbModalRef {
-    private _viewContainerRef;
     private _windowCmptRef;
     private _contentRef;
-    private _backdropCmptRef;
+    private _backdropCmptRef?;
+    private _beforeDismiss?;
     private _resolve;
     private _reject;
     /**
      * The instance of component used as modal's content.
      * Undefined when a TemplateRef is used as modal's content.
      */
-    componentInstance: any;
+    readonly componentInstance: any;
     /**
-     * A promise that is resolved when a modal is closed and rejected when a modal is dismissed.
+     * A promise that is resolved when the modal is closed and rejected when the modal is dismissed.
      */
     result: Promise<any>;
-    constructor(_viewContainerRef: ViewContainerRef, _windowCmptRef: ComponentRef<NgbModalWindow>, _contentRef: ContentRef, _backdropCmptRef?: ComponentRef<NgbModalBackdrop>);
+    constructor(_windowCmptRef: ComponentRef<NgbModalWindow>, _contentRef: ContentRef, _backdropCmptRef?: ComponentRef<NgbModalBackdrop>, _beforeDismiss?: Function);
     /**
-     * Can be used to close a modal, passing an optional result.
+     * Closes the modal with an optional 'result' value.
+     * The 'NgbMobalRef.result' promise will be resolved with provided value.
      */
     close(result?: any): void;
+    private _dismiss;
     /**
-     * Can be used to dismiss a modal, passing an optional reason.
+     * Dismisses the modal with an optional 'reason' value.
+     * The 'NgbModalRef.result' promise will be rejected with provided value.
      */
     dismiss(reason?: any): void;
-    private _removeModalElements();
+    private _removeModalElements;
 }

@@ -36,7 +36,7 @@ export declare class NgbPagination implements OnChanges {
      */
     maxSize: number;
     /**
-     *  Current page.
+     *  Current page. Page numbers start with 1
      */
     page: number;
     /**
@@ -46,6 +46,8 @@ export declare class NgbPagination implements OnChanges {
     /**
      *  An event fired when the page is changed.
      *  Event's payload equals to the newly selected page.
+     *  Will fire only if collection size is set and all values are valid.
+     *  Page numbers start with 1
      */
     pageChange: EventEmitter<number>;
     /**
@@ -57,10 +59,11 @@ export declare class NgbPagination implements OnChanges {
     hasNext(): boolean;
     selectPage(pageNumber: number): void;
     ngOnChanges(changes: SimpleChanges): void;
+    isEllipsis(pageNumber: any): boolean;
     /**
      * Appends ellipses and first/last page number to the displayed pages
      */
-    private _applyEllipses(start, end);
+    private _applyEllipses;
     /**
      * Rotates page numbers based on maxSize items visible.
      * Currently selected page stays in the middle:
@@ -69,11 +72,11 @@ export declare class NgbPagination implements OnChanges {
      * [5,*6*,7] for maxSize = 3
      * [4,5,*6*,7] for maxSize = 4
      */
-    private _applyRotation();
+    private _applyRotation;
     /**
      * Paginates page numbers based on maxSize items per page
      */
-    private _applyPagination();
-    private _setPageInRange(newPageNo);
-    private _updatePages(newPage);
+    private _applyPagination;
+    private _setPageInRange;
+    private _updatePages;
 }

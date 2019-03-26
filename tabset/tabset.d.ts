@@ -30,8 +30,11 @@ export declare class NgbTab {
      * Allows toggling disabled state of a given state. Disabled tabs can't be selected.
      */
     disabled: boolean;
-    contentTpl: NgbTabContent;
-    titleTpl: NgbTabTitle;
+    titleTpl: NgbTabTitle | null;
+    contentTpl: NgbTabContent | null;
+    titleTpls: QueryList<NgbTabTitle>;
+    contentTpls: QueryList<NgbTabContent>;
+    ngAfterContentChecked(): void;
 }
 /**
  * The payload of the change event fired right before the tab change
@@ -54,15 +57,32 @@ export interface NgbTabChangeEvent {
  * A component that makes it easy to create tabbed interface.
  */
 export declare class NgbTabset implements AfterContentChecked {
+    justifyClass: string;
     tabs: QueryList<NgbTab>;
     /**
      * An identifier of an initially selected (active) tab. Use the "select" method to switch a tab programmatically.
      */
     activeId: string;
     /**
-     * Type of navigation to be used for tabs. Can be one of 'tabs' or 'pills'.
+     * Whether the closed tabs should be hidden without destroying them
      */
-    type: 'tabs' | 'pills';
+    destroyOnHide: boolean;
+    /**
+     * The horizontal alignment of the nav with flexbox utilities. Can be one of 'start', 'center', 'end', 'fill' or
+     * 'justified'
+     * The default value is 'start'.
+     */
+    justify: 'start' | 'center' | 'end' | 'fill' | 'justified';
+    /**
+     * The orientation of the nav (horizontal or vertical).
+     * The default value is 'horizontal'.
+     */
+    orientation: 'horizontal' | 'vertical';
+    /**
+     * Type of navigation to be used for tabs. Can be one of Bootstrap defined types ('tabs' or 'pills').
+     * Since 3.0.0 can also be an arbitrary string (for custom themes).
+     */
+    type: 'tabs' | 'pills' | string;
     /**
      * A tab change event fired right before the tab selection happens. See NgbTabChangeEvent for payload details
      */
@@ -74,5 +94,5 @@ export declare class NgbTabset implements AfterContentChecked {
      */
     select(tabId: string): void;
     ngAfterContentChecked(): void;
-    private _getTabById(id);
+    private _getTabById;
 }

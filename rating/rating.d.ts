@@ -9,14 +9,19 @@ export interface StarTemplateContext {
      * Star fill percentage. An integer value between 0 and 100
      */
     fill: number;
+    /**
+     * Index of the star.
+     */
+    index: number;
 }
 /**
  * Rating directive that will take care of visualising a star rating bar.
  */
 export declare class NgbRating implements ControlValueAccessor, OnInit, OnChanges {
     private _changeDetectorRef;
-    private _oldRate;
-    range: number[];
+    contexts: StarTemplateContext[];
+    disabled: boolean;
+    nextRate: number;
     /**
      * Maximal rating that can be given using this widget.
      */
@@ -30,8 +35,12 @@ export declare class NgbRating implements ControlValueAccessor, OnInit, OnChange
      */
     readonly: boolean;
     /**
+     * A flag indicating if rating can be reset to 0 on mouse click
+     */
+    resettable: boolean;
+    /**
      * A template to override star display.
-     * Alternatively put a <template> as the only child of <ngb-rating> element
+     * Alternatively put a <ng-template> as the only child of <ngb-rating> element
      */
     starTemplate: TemplateRef<StarTemplateContext>;
     /**
@@ -54,13 +63,17 @@ export declare class NgbRating implements ControlValueAccessor, OnInit, OnChange
     constructor(config: NgbRatingConfig, _changeDetectorRef: ChangeDetectorRef);
     ariaValueText(): string;
     enter(value: number): void;
+    handleBlur(): void;
+    handleClick(value: number): void;
     handleKeyDown(event: KeyboardEvent): void;
-    getFillValue(index: number): number;
     ngOnChanges(changes: SimpleChanges): void;
     ngOnInit(): void;
     registerOnChange(fn: (value: any) => any): void;
     registerOnTouched(fn: () => any): void;
     reset(): void;
+    setDisabledState(isDisabled: boolean): void;
     update(value: number, internalChange?: boolean): void;
     writeValue(value: any): void;
+    private _getFillValue;
+    private _updateState;
 }
